@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SafeLink · Blogger</title>
+
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <style>
+        /* minimal reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: #0b1a2e;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+            padding: 40px 32px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sub {
+            color: #4a5a6e;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        /* ── Cloudflare Turnstile ── */
+        .captcha-wrap {
+            margin: 18px 0 8px;
+            display: flex;
+            justify-content: center;
+        }
+
+        form {
+            margin-top: 8px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #0b1a2e;
+            margin-bottom: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: #f4f7fb;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 4px 4px 4px 16px;
+            transition: border 0.2s;
+        }
+
+        .input-group:focus-within {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+            background: #ffffff;
+        }
+
+        .input-group input {
+            border: none;
+            background: transparent;
+            padding: 12px 0;
+            font-size: 0.92rem;
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+            color: #0b1a2e;
+        }
+
+        .input-group input::placeholder {
+            color: #8a9aa8;
+        }
+
+        .input-group button {
+            background: #2563eb;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-group button:hover {
+            background: #1d4ed8;
+        }
+
+        .input-group button:active {
+            transform: scale(0.96);
+        }
+
+        .input-group button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .toggle-pwd {
+            background: none;
+            border: none;
+            padding: 0 12px 0 4px;
+            color: #8a9aa8;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .toggle-pwd:hover {
+            color: #0b1a2e;
+        }
+
+        .message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message.show {
+            display: flex;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .message.info {
+            background: #dbeafe;
+            color: #1e3a8a;
+            border: 1px solid #93c5fd;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .footer-note {
+            margin-top: 24px;
+            font-size: 0.7rem;
+            color: #8a9aa8;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
+        }
+
+        /* mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 28px 20px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+            .input-group {
+                flex-wrap: wrap;
+                padding: 8px 12px;
+            }
+            .input-group input {
+                padding: 10px 0;
+                width: 100%;
+            }
+            .input-group button {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+            }
+            .toggle-pwd {
+                padding: 0 8px 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app">
+        <h1>🔗 SafeLink</h1>
+        <div class="sub">Decode &amp; redirect to your destination</div>
+
+        <!-- Cloudflare Turnstile CAPTCHA -->
+        <div class="captcha-wrap">
+            <div class="cf-turnstile"
+                 data-sitekey="Cloudflayer_capture_api_key"
+                 data-callback="onTurnstileSuccess"
+                 data-expired-callback="onTurnstileExpired"
+                 data-error-callback="onTurnstileError"
+                 data-theme="light"></div>
+        </div>
+
+        <!-- password form (hidden by default) -->
+        <form id="passwordForm" style="display:none;">
+            <label for="passwordInput">🔑 Enter password to decrypt</label>
+            <div class="input-group">
+                <input type="password" id="passwordInput" placeholder="Your password" autocomplete="off" />
+                <button type="button" class="toggle-pwd" id="togglePwd" aria-label="Toggle password visibility">
+                    <i class="eye-icon">👁️</i>
+                </button>
+                <button type="submit" id="decryptBtn">
+                    <span id="decryptBtnText">🔓 Decrypt</span>
+                </button>
+            </div>
+            <div style="margin-top:6px;font-size:0.75rem;color:#8a9aa8;">
+                <i>This link is password-protected.</i>
+            </div>
+        </form>
+
+        <!-- message area -->
+        <div id="message" class="message"></div>
+
+        <div class="footer-note">
+            © 2015 – <span id="currentYear">2027</span> SafeLink. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── DOM refs ──
+            const passwordForm = document.getElementById('passwordForm');
+            const passwordInput = document.getElementById('passwordInput');
+            const decryptBtn = document.getElementById('decryptBtn');
+            const decryptBtnText = document.getElementById('decryptBtnText');
+            const togglePwd = document.getElementById('togglePwd');
+            const messageDiv = document.getElementById('message');
+
+            // ── Auto-update copyright year (2015 → current year) ──
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // ── Cloudflare Turnstile state ──
+            let turnstileToken = null;
+            let pendingRedirectUrl = null;
+
+            window.onTurnstileSuccess = function(token) {
+                turnstileToken = token;
+
+                // If we were waiting to redirect, do it now.
+                if (pendingRedirectUrl) {
+                    showMessage('Captcha verified. Redirecting…', 'success');
+                    setTimeout(function() {
+                        window.location.href = pendingRedirectUrl;
+                    }, 600);
+                    return;
+                }
+
+                // If password form is visible, allow decryption.
+                if (passwordForm.style.display === 'block') {
+                    decryptBtn.disabled = false;
+                    showMessage('Captcha verified. Enter password to decrypt.', 'info');
+                }
+            };
+
+            window.onTurnstileExpired = function() {
+                turnstileToken = null;
+                decryptBtn.disabled = true;
+                showMessage('Captcha expired. Please complete it again.', 'error');
+            };
+
+            window.onTurnstileError = function() {
+                turnstileToken = null;
+                decryptBtn.disabled = true;
+                showMessage('Captcha error. Please refresh and try again.', 'error');
+            };
+
+            // ── Base86 alphabet ──
+            const BASE86_ALPHABET =
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~!*\'(),:;@&=+$/#%^[]{';
+
+            // ── Encoding detection ──
+            function detectEncoding(str) {
+                const base64Regex = /^[A-Za-z0-9+/=]+$/;
+                if (base64Regex.test(str)) {
+                    return '64bit';
+                } else {
+                    for (const ch of str) {
+                        if (!BASE86_ALPHABET.includes(ch)) {
+                            return 'unknown';
+                        }
+                    }
+                    return '86bit';
+                }
+            }
+
+            // ── Base64 ──
+            function decodeBase64(str) {
+                try {
+                    return decodeURIComponent(escape(atob(str)));
+                } catch (_) {
+                    return atob(str);
+                }
+            }
+
+            // ── Base86 ──
+            function decodeBase86(str) {
+                const base = 86n;
+                let num = 0n;
+                for (const ch of str) {
+                    const idx = BASE86_ALPHABET.indexOf(ch);
+                    if (idx === -1) throw new Error('Invalid Base86 character: ' + ch);
+                    num = num * base + BigInt(idx);
+                }
+                const bytes = [];
+                while (num > 0n) {
+                    bytes.unshift(Number(num & 0xFFn));
+                    num = num >> 8n;
+                }
+                let leadingZeros = 0;
+                for (const ch of str) {
+                    if (ch === BASE86_ALPHABET[0]) leadingZeros++;
+                    else break;
+                }
+                for (let i = 0; i < leadingZeros; i++) {
+                    bytes.unshift(0);
+                }
+                if (bytes.length === 0) return '';
+                return new TextDecoder().decode(new Uint8Array(bytes));
+            }
+
+            // ── Decode based on detection ──
+            function decodeData(encoded) {
+                const enc = detectEncoding(encoded);
+                if (enc === '64bit') {
+                    return decodeBase64(encoded);
+                } else if (enc === '86bit') {
+                    return decodeBase86(encoded);
+                } else {
+                    throw new Error('Unrecognized encoding.');
+                }
+            }
+
+            // ── Password decryption (PBKDF2 + XOR) ──
+            async function deriveKey(password, salt) {
+                const enc = new TextEncoder();
+                const keyMaterial = await crypto.subtle.importKey(
+                    'raw',
+                    enc.encode(password),
+                    { name: 'PBKDF2' },
+                    false,
+                    ['deriveBits']
+                );
+                const bits = await crypto.subtle.deriveBits({
+                        name: 'PBKDF2',
+                        salt: salt,
+                        iterations: 100000,
+                        hash: 'SHA-256'
+                    },
+                    keyMaterial,
+                    256
+                );
+                return new Uint8Array(bits);
+            }
+
+            async function decryptWithPassword(encryptedBase64, password) {
+                const encryptedBytes = base64ToArrayBuffer(encryptedBase64);
+                const salt = encryptedBytes.slice(0, 16);
+                const data = encryptedBytes.slice(16);
+                const key = await deriveKey(password, salt);
+                const decrypted = new Uint8Array(data.length);
+                for (let i = 0; i < data.length; i++) {
+                    decrypted[i] = data[i] ^ key[i % key.length];
+                }
+                return new TextDecoder().decode(decrypted);
+            }
+
+            function base64ToArrayBuffer(base64) {
+                const binary = atob(base64);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+                return bytes;
+            }
+
+            // ── Main logic ──
+            async function handleSafelink() {
+                const params = new URLSearchParams(window.location.search);
+                const dataParam = params.get('data');
+                if (!dataParam) {
+                    showMessage('No data parameter found in the URL.', 'error');
+                    return;
+                }
+
+                try {
+                    // First, try to decode without password
+                    let decoded = decodeData(dataParam);
+
+                    // Check if decoded looks like a URL
+                    if (isValidUrl(decoded)) {
+                        // Require CAPTCHA before redirect
+                        if (turnstileToken) {
+                            setTimeout(function() {
+                                window.location.href = decoded;
+                            }, 600);
+                        } else {
+                            pendingRedirectUrl = decoded;
+                        }
+                        return;
+                    }
+
+                    // Not a URL → likely encrypted → ask for password
+                    passwordForm.style.display = 'block';
+                    decryptBtn.disabled = !turnstileToken;
+                    showMessage('Complete the CAPTCHA and enter the password to continue.', 'info');
+                    passwordInput.focus();
+
+                    window._safelinkData = dataParam;
+
+                } catch (err) {
+                    // Decoding failed, maybe it's encrypted
+                    passwordForm.style.display = 'block';
+                    decryptBtn.disabled = !turnstileToken;
+                    showMessage('Complete the CAPTCHA and enter the password to continue.', 'info');
+                    window._safelinkData = dataParam;
+                    passwordInput.focus();
+                }
+            }
+
+            function isValidUrl(str) {
+                try {
+                    const url = new URL(str);
+                    return url.protocol === 'http:' || url.protocol === 'https:';
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            // ── Password form submit ──
+            passwordForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const password = passwordInput.value.trim();
+                if (!password) {
+                    showMessage('Please enter a password.', 'error');
+                    return;
+                }
+
+                if (!turnstileToken) {
+                    showMessage('Please complete the CAPTCHA first.', 'error');
+                    return;
+                }
+
+                const encoded = window._safelinkData;
+                if (!encoded) {
+                    showMessage('No data to decrypt.', 'error');
+                    return;
+                }
+
+                decryptBtn.disabled = true;
+                decryptBtnText.innerHTML = '<span class="loader"></span> Decrypting…';
+
+                try {
+                    let decodedEncoded;
+                    try {
+                        decodedEncoded = decodeData(encoded);
+                    } catch (e) {
+                        throw new Error('Invalid encoded data format.');
+                    }
+
+                    const decrypted = await decryptWithPassword(decodedEncoded, password);
+
+                    if (isValidUrl(decrypted)) {
+                        showMessage('✅ Decryption successful! Redirecting…', 'success');
+                        setTimeout(function() {
+                            window.location.href = decrypted;
+                        }, 600);
+                    } else {
+                        showMessage('Decrypted data is not a valid URL. Wrong password?', 'error');
+                        decryptBtn.disabled = !turnstileToken;
+                        decryptBtnText.textContent = '🔓 Decrypt';
+                    }
+                } catch (err) {
+                    showMessage('Decryption error: ' + err.message, 'error');
+                    decryptBtn.disabled = !turnstileToken;
+                    decryptBtnText.textContent = '🔓 Decrypt';
+                }
+            });
+
+            // ── Toggle password visibility ──
+            togglePwd.addEventListener('click', function() {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                this.textContent = type === 'password' ? '👁️' : '🙈';
+            });
+
+            // ── Show message ──
+            function showMessage(text, type) {
+                messageDiv.textContent = text;
+                messageDiv.className = 'message show ' + (type || 'info');
+            }
+
+            // ── Init ──
+            handleSafelink();
+
+        })();
+    </script>
+
+</body>
+</html>
