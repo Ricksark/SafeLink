@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SafeLink Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+    /* ── Reset & Base ── */
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --surface-2: #f0f4fa;
+        --border: #e2e8f0;
+        --text: #0b1a2e;
+        --text-secondary: #4a5a6e;
+        --text-muted: #8a9aa8;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --primary-light: #dbeafe;
+        --primary-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.08);
+        --radius: 16px;
+        --radius-sm: 10px;
+        --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+    }
+
+    .container {
+        max-width: 760px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.82);
+    }
+
+    .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        letter-spacing: -0.02em;
+        color: var(--text);
+    }
+
+    .brand-icon {
+        width: 38px;
+        height: 38px;
+        background: var(--primary-gradient);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1rem;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        flex-shrink: 0;
+    }
+
+    .brand span {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .header-badge {
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 4px 14px;
+        border-radius: 100px;
+        background: var(--primary-light);
+        color: var(--primary);
+        border: 1px solid rgba(37, 99, 235, 0.10);
+        white-space: nowrap;
+    }
+
+    .header-badge i {
+        margin-right: 4px;
+    }
+
+    /* ── GitHub Button ── */
+    .github-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 4px 14px;
+        border-radius: 100px;
+        background: var(--surface-2);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        transition: var(--transition);
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .github-btn:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .github-btn i {
+        font-size: 0.8rem;
+    }
+
+    /* ── MAIN ── */
+    .main {
+        flex: 1;
+        padding: 40px 0 36px;
+    }
+
+    .hero {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+        margin-bottom: 6px;
+    }
+
+    .hero h1 .highlight {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+
+    .hero .blogger-tag {
+        display: inline-block;
+        margin-top: 10px;
+        background: #f1f5f9;
+        padding: 4px 16px;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+    }
+
+    .hero .blogger-tag i {
+        color: #f48024;
+        margin-right: 6px;
+    }
+
+    /* ── Card ── */
+    .card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border);
+        padding: 32px 36px;
+        transition: var(--transition);
+    }
+
+    .card:hover {
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* ── Form ── */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--text);
+        margin-bottom: 6px;
+    }
+
+    .form-label i {
+        color: var(--primary);
+        font-size: 0.85rem;
+    }
+
+    .form-label .label-badge {
+        font-weight: 400;
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        background: var(--surface-2);
+        padding: 1px 10px;
+        border-radius: 100px;
+        margin-left: 4px;
+    }
+
+    .input-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+    }
+
+    .input-wrap:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+        background: var(--surface);
+    }
+
+    .input-wrap .prefix {
+        padding: 0 0 0 14px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        user-select: none;
+    }
+
+    .input-wrap input,
+    .input-wrap select {
+        width: 100%;
+        padding: 12px 14px;
+        border: none;
+        background: transparent;
+        font-size: 0.92rem;
+        font-family: inherit;
+        color: var(--text);
+        outline: none;
+        min-width: 0;
+    }
+
+    .input-wrap input::placeholder {
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+
+    .input-wrap .input-icon {
+        padding: 0 14px 0 4px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .input-wrap .clear-btn {
+        padding: 0 14px 0 0;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 0.85rem;
+        display: none;
+        transition: var(--transition);
+    }
+
+    .input-wrap .clear-btn.visible {
+        display: block;
+    }
+
+    .input-wrap .clear-btn:hover {
+        color: var(--text);
+    }
+
+    .input-hint {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+        padding-left: 4px;
+    }
+
+    .input-hint i {
+        margin-right: 4px;
+    }
+
+    /* ── Result ── */
+    .result-area {
+        margin-top: 24px;
+        animation: fadeUp 0.4s ease;
+    }
+
+    .result-box {
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1.5px solid var(--border);
+        transition: var(--transition);
+        word-break: break-all;
+    }
+
+    .result-box.has-result {
+        border-color: var(--primary);
+        background: var(--surface);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.06);
+    }
+
+    .result-box .result-text {
+        flex: 1;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text);
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: 'Inter', monospace;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+    }
+
+    .result-box .result-text .host-part {
+        color: var(--text-secondary);
+        font-weight: 400;
+    }
+
+    .result-box .result-text .param-part {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    .result-box .result-text .encoded-part {
+        color: var(--text-secondary);
+        font-weight: 400;
+    }
+
+    .result-box .result-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .result-box .result-actions button {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.85rem;
+    }
+
+    .result-box .result-actions button:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: scale(1.04);
+    }
+
+    .result-box .result-actions button.copied {
+        background: var(--success);
+        border-color: var(--success);
+        color: #fff;
+    }
+
+    .result-placeholder {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 400;
+    }
+
+    .result-placeholder i {
+        margin-right: 8px;
+        opacity: 0.6;
+    }
+
+    .result-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 10px;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        padding: 0 4px;
+    }
+
+    .result-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--surface-2);
+        padding: 2px 12px;
+        border-radius: 100px;
+    }
+
+    .result-meta i {
+        font-size: 0.7rem;
+    }
+
+    /* ── Buttons ── */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 32px;
+        background: var(--primary-gradient);
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition);
+        width: 100%;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.20);
+        position: relative;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .btn-primary::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(37, 99, 235, 0.30);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.20);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .btn-primary i {
+        font-size: 1rem;
+    }
+
+    /* ── Toast ── */
+    .toast-container {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        pointer-events: none;
+    }
+
+    .toast {
+        background: var(--text);
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 500;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        pointer-events: auto;
+        animation: toastIn 0.35s ease;
+        backdrop-filter: blur(8px);
+        background: rgba(11, 26, 46, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .toast i {
+        font-size: 0.95rem;
+    }
+
+    .toast.success i {
+        color: #34d399;
+    }
+    .toast.error i {
+        color: #f87171;
+    }
+    .toast.info i {
+        color: #60a5fa;
+    }
+
+    .toast.out {
+        animation: toastOut 0.3s ease forwards;
+    }
+
+    @keyframes toastIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.96);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes toastOut {
+        from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(12px) scale(0.96);
+        }
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+        padding: 24px 0 20px;
+        margin-top: auto;
+    }
+
+    .footer-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 18px;
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+    }
+
+    .footer-links a {
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .footer-links a:hover {
+        color: var(--primary);
+    }
+
+    .footer-links a i {
+        font-size: 0.7rem;
+        opacity: 0.5;
+    }
+
+    .footer-copy {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        letter-spacing: 0.01em;
+    }
+
+    .footer-copy span {
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+
+    .footer-divider {
+        width: 40px;
+        height: 2px;
+        background: var(--primary-gradient);
+        border-radius: 4px;
+        opacity: 0.25;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 680px) {
+        .container {
+            padding: 0 16px;
+        }
+
+        .header {
+            padding: 12px 0;
+        }
+
+        .brand {
+            font-size: 1rem;
+            gap: 8px;
+        }
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 0.85rem;
+        }
+
+        .header-badge {
+            font-size: 0.55rem;
+            padding: 2px 10px;
+        }
+
+        .github-btn {
+            font-size: 0.55rem;
+            padding: 2px 10px;
+        }
+
+        .main {
+            padding: 28px 0 24px;
+        }
+
+        .hero h1 {
+            font-size: 1.5rem;
+        }
+        .hero p {
+            font-size: 0.9rem;
+        }
+
+        .card {
+            padding: 20px 16px;
+            border-radius: 14px;
+        }
+
+        .form-label {
+            font-size: 0.82rem;
+        }
+
+        .input-wrap {
+            border-radius: 8px;
+        }
+        .input-wrap input,
+        .input-wrap select {
+            padding: 10px 12px;
+            font-size: 0.85rem;
+        }
+        .input-wrap .prefix {
+            padding-left: 10px;
+            font-size: 0.78rem;
+        }
+
+        .result-box {
+            padding: 12px 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .result-box .result-text {
+            font-size: 0.78rem;
+            white-space: normal;
+            word-break: break-all;
+            flex: 1 1 100%;
+        }
+        .result-box .result-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .result-box .result-actions button {
+            width: 32px;
+            height: 32px;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            padding: 12px 20px;
+            font-size: 0.88rem;
+        }
+
+        .footer-links {
+            gap: 12px;
+            font-size: 0.75rem;
+        }
+        .footer-copy {
+            font-size: 0.7rem;
+        }
+
+        .toast {
+            font-size: 0.8rem;
+            padding: 10px 16px;
+            max-width: 92%;
+        }
+
+        .result-meta {
+            font-size: 0.7rem;
+            gap: 8px;
+        }
+        .result-meta span {
+            padding: 1px 10px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .hero h1 {
+            font-size: 1.3rem;
+        }
+        .card {
+            padding: 16px 12px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+    <div class="container header-inner">
+        <a href="#" class="brand">
+            <span class="brand-icon"><i class="fas fa-link"></i></span>
+            Safe<span>Link</span>
+        </a>
+        <div class="header-actions" style="display:flex;align-items:center;gap:10px;">
+            <span class="header-badge"><i class="fas fa-blog"></i> Blogger</span>
+            <a href="https://github.com/Ricksark/SafeLink" target="_blank" class="github-btn">
+                <i class="fab fa-github"></i> Source
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+    <div class="container">
+
+        <!-- Hero -->
+        <section class="hero">
+            <h1>
+                <span class="highlight">SafeLink</span> Generator
+            </h1>
+            <p>Create long, secure safelinks for your Blogger.com pages.</p>
+            <span class="blogger-tag"><i class="fab fa-blogger-b"></i> optimized for Blogger</span>
+        </section>
+
+        <!-- Generator Card -->
+        <section class="card" id="generatorCard">
+
+            <form id="linkForm" autocomplete="off" novalidate>
+
+                <!-- Destination URL -->
+                <div class="form-group">
+                    <div class="form-label">
+                        <i class="fas fa-arrow-right"></i>
+                        Destination URL
+                        <span class="label-badge">required</span>
+                    </div>
+                    <div class="input-wrap">
+                        <span class="prefix"><i class="fas fa-globe" style="opacity:0.4;"></i></span>
+                        <input
+                            type="url"
+                            id="destinationInput"
+                            placeholder="https://example.com/your-long-destination"
+                            required
+                            autofocus
+                        />
+                        <button type="button" class="clear-btn" id="clearBtn" aria-label="Clear input">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i> The full URL you want to cloak and protect.
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <button type="submit" class="btn-primary" id="generateBtn">
+                    <i class="fas fa-bolt"></i>
+                    Generate SafeLink
+                </button>
+
+            </form>
+
+            <!-- Result -->
+            <div class="result-area" id="resultArea" style="display:none;">
+                <div class="form-label" style="margin-bottom:6px;">
+                    <i class="fas fa-link" style="color:var(--primary);"></i>
+                    Your SafeLink
+                    <span class="label-badge">ready</span>
+                </div>
+                <div class="result-box" id="resultBox">
+                    <span class="result-text" id="resultText">
+                        <span class="result-placeholder">
+                            <i class="fas fa-spinner fa-pulse"></i> generating…
+                        </span>
+                    </span>
+                    <div class="result-actions">
+                        <button id="copyBtn" aria-label="Copy to clipboard" title="Copy">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button id="visitBtn" aria-label="Open link" title="Open">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="result-meta" id="resultMeta">
+                    <span id="metaLength"><i class="fas fa-ruler"></i> 0 chars</span>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-divider"></div>
+        <div class="footer-links">
+            <a href="/p/privacy.html"><i class="fas fa-shield-alt"></i> Privacy</a>
+            <a href="/p/terms.html"><i class="fas fa-file-alt"></i> Terms</a>
+            <a href="/p/support.html"><i class="fas fa-life-ring"></i> Support</a>
+            <a href="https://github.com/Ricksark/SafeLink" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+        <div class="footer-copy">
+            &copy; 2026 <span>SafeLink</span> &mdash; built for Blogger <i class="fas fa-heart" style="color:#ef4444;font-size:0.65rem;"></i>
+        </div>
+    </div>
+</footer>
+
+<!-- ═══ TOAST CONTAINER ═══ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══ SCRIPT ═══ -->
+<script>
+    (function() {
+        'use strict';
+
+        // ── DOM refs ──
+        const form = document.getElementById('linkForm');
+        const destInput = document.getElementById('destinationInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const resultArea = document.getElementById('resultArea');
+        const resultText = document.getElementById('resultText');
+        const resultBox = document.getElementById('resultBox');
+        const copyBtn = document.getElementById('copyBtn');
+        const visitBtn = document.getElementById('visitBtn');
+        const toastContainer = document.getElementById('toastContainer');
+        const metaLength = document.getElementById('metaLength');
+
+        // ── State ──
+        let currentSafeLink = '';
+
+        // ── Helpers ──
+        function getHostLink() {
+            return window.location.origin;
+        }
+
+        function getBloggerPath() {
+            // Blogger safelink path: /p/safelink.html
+            return '/p/safelink.html';
+        }
+
+        function isValidUrl(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // ── Base64 ──
+        function encodeBase64(str) {
+            try {
+                return btoa(unescape(encodeURIComponent(str)));
+            } catch (_) {
+                return btoa(str);
+            }
+        }
+
+        // ── Build SafeLink ──
+        function buildSafeLink(destination) {
+            const host = getHostLink();
+            const path = getBloggerPath();
+
+            const encodedData = encodeBase64(destination);
+
+            const base = host.endsWith('/') ? host.slice(0, -1) : host;
+            const cleanPath = path.startsWith('/') ? path : '/' + path;
+            const safeLink = base + cleanPath + '?data=' + encodedData;
+
+            return {
+                link: safeLink,
+                encoded: encodedData
+            };
+        }
+
+        // ── Update UI ──
+        function updateResult(result) {
+            if (result && result.link) {
+                currentSafeLink = result.link;
+                resultArea.style.display = 'block';
+
+                // Display the link with highlighted parts
+                const host = getHostLink();
+                let displayHtml = result.link;
+                if (displayHtml.startsWith(host)) {
+                    const rest = displayHtml.slice(host.length);
+                    // Find the ?data= part
+                    const dataIdx = rest.indexOf('?data=');
+                    if (dataIdx !== -1) {
+                        const pathPart = rest.slice(0, dataIdx + 1);
+                        const paramPart = 'data=';
+                        const encodedPart = rest.slice(dataIdx + 6);
+                        displayHtml =
+                            `<span class="host-part">${host}</span>${pathPart}<span class="param-part">${paramPart}</span><span class="encoded-part">${encodedPart}</span>`;
+                    } else {
+                        displayHtml =
+                            `<span class="host-part">${host}</span><span class="encoded-part">${rest}</span>`;
+                    }
+                }
+                resultText.innerHTML = displayHtml;
+                resultText.style.whiteSpace = 'nowrap';
+                resultText.style.overflow = 'hidden';
+                resultText.style.textOverflow = 'ellipsis';
+                resultBox.classList.add('has-result');
+
+                // Update meta
+                metaLength.innerHTML = `<i class="fas fa-ruler"></i> ${result.link.length} chars`;
+
+                // Show the result area with animation
+                resultArea.style.animation = 'none';
+                resultArea.offsetHeight; // trigger reflow
+                resultArea.style.animation = 'fadeUp 0.4s ease';
+            } else {
+                resultArea.style.display = 'none';
+                resultBox.classList.remove('has-result');
+                currentSafeLink = '';
+            }
+        }
+
+        // ── Handle Generate ──
+        function handleGenerate() {
+            const dest = destInput.value.trim();
+            if (!dest) {
+                showToast('Please enter a destination URL.', 'error');
+                destInput.focus();
+                return;
+            }
+            if (!isValidUrl(dest)) {
+                showToast('Please enter a valid HTTP or HTTPS URL.', 'error');
+                destInput.focus();
+                return;
+            }
+
+            try {
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating…';
+
+                const result = buildSafeLink(dest);
+                updateResult(result);
+
+                showToast('SafeLink generated successfully!', 'success');
+
+                // Subtle card animation
+                const card = document.getElementById('generatorCard');
+                card.style.transition = 'box-shadow 0.3s ease';
+                card.style.boxShadow = '0 8px 40px rgba(37,99,235,0.12)';
+                setTimeout(() => {
+                    card.style.boxShadow = '';
+                }, 600);
+
+            } catch (err) {
+                console.error(err);
+                showToast('Error generating safelink: ' + err.message, 'error');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-bolt"></i> Generate SafeLink';
+            }
+        }
+
+        // ── Toast ──
+        function showToast(message, type) {
+            type = type || 'success';
+            const iconMap = {
+                'success': 'fa-check-circle',
+                'error': 'fa-exclamation-circle',
+                'info': 'fa-info-circle'
+            };
+            const icon = iconMap[type] || 'fa-info-circle';
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('out');
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // ── Copy ──
+        function copyToClipboard(text) {
+            if (!text) {
+                showToast('No link to copy.', 'error');
+                return;
+            }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Copied to clipboard!', 'success');
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    }, 1800);
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Copied to clipboard!', 'success');
+                copyBtn.classList.add('copied');
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 1800);
+            } catch (_) {
+                showToast('Could not copy. Please copy manually.', 'error');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // ── Event Listeners ──
+
+        // Form submit
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleGenerate();
+        });
+
+        // Clear button
+        clearBtn.addEventListener('click', function() {
+            destInput.value = '';
+            destInput.focus();
+            clearBtn.classList.remove('visible');
+            if (!destInput.value.trim()) {
+                updateResult(null);
+            }
+        });
+
+        // Show/hide clear button
+        destInput.addEventListener('input', function() {
+            if (this.value.trim().length > 0) {
+                clearBtn.classList.add('visible');
+            } else {
+                clearBtn.classList.remove('visible');
+                if (resultArea.style.display !== 'none') {
+                    updateResult(null);
+                }
+            }
+        });
+
+        // Copy button
+        copyBtn.addEventListener('click', function() {
+            if (currentSafeLink) {
+                copyToClipboard(currentSafeLink);
+            } else {
+                showToast('No link to copy.', 'error');
+            }
+        });
+
+        // Visit button
+        visitBtn.addEventListener('click', function() {
+            if (currentSafeLink) {
+                window.open(currentSafeLink, '_blank');
+            } else {
+                showToast('No link to open.', 'error');
+            }
+        });
+
+        // Keyboard shortcut: Cmd+Enter / Ctrl+Enter
+        destInput.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                e.preventDefault();
+                handleGenerate();
+            }
+        });
+
+        // ── Init ──
+        // Prefill from ?url= param
+        (function prefillFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            const urlParam = params.get('url');
+            if (urlParam) {
+                try {
+                    const decoded = decodeURIComponent(urlParam);
+                    if (isValidUrl(decoded)) {
+                        destInput.value = decoded;
+                        clearBtn.classList.add('visible');
+                        setTimeout(() => {
+                            handleGenerate();
+                        }, 400);
+                    }
+                } catch (_) { /* ignore */ }
+            }
+        })();
+
+        // Toast dismiss on click
+        toastContainer.addEventListener('click', function(e) {
+            const toast = e.target.closest('.toast');
+            if (toast) {
+                toast.classList.add('out');
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 300);
+            }
+        });
+
+        console.log('🔗 SafeLink Generator (Blogger) initialized.');
+
+    })();
+</script>
+</body>
+</html>
